@@ -1,46 +1,61 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>河馬的小工具箱</title>
+
 <style>
+
 body{
     margin:0;
     font-family:"Microsoft JhengHei",sans-serif;
     background:#f4f6f9;
     color:#222;
 }
+
 .header{
     background:linear-gradient(135deg,#2c6bed,#5f8fff);
     color:white;
     padding:60px 20px;
     text-align:center;
 }
+
 .header h1{
     margin:0;
     font-size:42px;
 }
+
 .header p{
     margin-top:15px;
     font-size:18px;
     opacity:0.9;
 }
+
 .container{
     max-width:1100px;
     margin:auto;
     padding:40px 20px;
 }
+
 .section-title{
     font-size:28px;
     margin-bottom:25px;
     font-weight:bold;
 }
+
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
     gap:25px;
 }
+
+.single-grid{
+    grid-template-columns:minmax(260px,500px);
+    justify-content:center;
+}
+
 .card{
     background:white;
     border-radius:18px;
@@ -48,17 +63,21 @@ body{
     box-shadow:0 6px 18px rgba(0,0,0,0.08);
     transition:0.2s;
 }
+
 .card:hover{
     transform:translateY(-5px);
 }
+
 .card h2{
     margin-top:0;
     font-size:24px;
 }
+
 .card p{
     color:#555;
     line-height:1.7;
 }
+
 .button{
     display:inline-block;
     margin-top:15px;
@@ -69,15 +88,18 @@ body{
     border-radius:10px;
     font-weight:bold;
 }
+
 .button:hover{
     background:#1d4fb8;
 }
+
 .footer{
     text-align:center;
     padding:40px 20px;
     color:#666;
     font-size:14px;
 }
+
 .note{
     background:#fff7d8;
     border-left:6px solid #f0c000;
@@ -86,29 +108,44 @@ body{
     margin-bottom:40px;
     line-height:1.8;
 }
+
 @media(max-width:768px){
+
 .header h1{
     font-size:32px;
 }
+
 }
+
 </style>
 </head>
+
 <body>
+
 <div class="header">
     <h1>河馬的小工具箱</h1>
-    <p>特教 × 職涯  × 小型互動工具</p>
+    <p>特教 × 職涯 × 小型互動工具</p>
 </div>
+
 <div class="container">
+
 <div class="note">
+
 <b>提醒：</b><br>
+
 這些工具主要作為自我理解、職涯探索與教育用途使用。<br>
 內容不等於正式醫療診斷，若長期影響生活功能，仍建議尋求專業協助。
+
 </div>
+
+
+
 <div class="section-title">自我理解工具</div>
 
 <div class="grid">
 
 <div class="card">
+
     <h2>成人 ADHD（注意力不集中與過動）自我檢測</h2>
 
     <p>
@@ -119,9 +156,13 @@ body{
     <a class="button" href="adhd.html">
         開始測驗
     </a>
+
 </div>
 
+
+
 <div class="card">
+
     <h2>成人 ASD（自閉光譜）特徵檢核</h2>
 
     <p>
@@ -132,9 +173,13 @@ body{
     <a class="button" href="asd.html">
         開始檢核
     </a>
+
 </div>
 
+
+
 <div class="card">
+
     <h2>生活運作風格探索</h2>
 
     <p>
@@ -145,6 +190,7 @@ body{
     <a class="button" href="life-style.html">
         開始探索
     </a>
+
 </div>
 
 </div>
@@ -153,9 +199,10 @@ body{
 
 <div class="section-title">職涯探索</div>
 
-<div class="grid single-grid">.
+<div class="grid single-grid">
 
 <div class="card">
+
     <h2>職涯探索工具</h2>
 
     <p>
@@ -166,6 +213,7 @@ body{
     <a class="button" href="holland.html">
         開始測驗
     </a>
+
 </div>
 
 </div>
@@ -177,6 +225,7 @@ body{
 <div class="grid">
 
 <div class="card">
+
     <h2>小鬱亂入</h2>
 
     <p>
@@ -189,9 +238,13 @@ body{
        target="_blank">
        前往測驗
     </a>
+
 </div>
 
+
+
 <div class="card">
+
     <h2>留言與建議</h2>
 
     <p>
@@ -204,24 +257,30 @@ body{
        target="_blank">
        前往留言
     </a>
+
 </div>
 
 </div>
+
 </div>
+
+
+
 <div style="text-align:center;margin-top:20px;color:#666;">
+
     本站訪問次數：
     <span id="busuanzi_value_site_pv"></span>
+
 </div>
 
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    
-    <div class="footer">
+
+
+
+<div class="footer">
     河馬的小工具箱 © 2026
 </div>
+
 </body>
 </html>
-
-.single-grid{
-    grid-template-columns:minmax(260px,500px);
-    justify-content:center;
-}
+```
