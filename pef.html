@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人境適配測驗 · 河馬的小工具箱</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#2c6bed;
+  --blue-dark:#1d4fb8;
+  --bg:#f4f6f9;
+  --surface:#fff;
+  --text:#222;
+  --text2:#555;
+  --text3:#888;
+  --border:#e5e7eb;
+  --radius:14px;
+
+  /* 四個面向的顏色 */
+  --c-value:#7C3AED;   /* 價值觀 */
+  --c-style:#0891B2;   /* 工作方式 */
+  --c-culture:#16A34A; /* 團隊文化 */
+  --c-sensory:#E8521A; /* 感官負荷 */
+}
+body{
+  font-family:"Microsoft JhengHei",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#2c6bed,#5f8fff);
+  color:#fff;
+  padding:56px 20px 44px;
+  text-align:center;
+}
+.header h1{font-size:clamp(26px,5vw,38px);font-weight:bold;margin-bottom:10px;}
+.header p{font-size:15px;opacity:0.88;line-height:1.8;max-width:480px;margin:0 auto;}
+.header-sub{
+  display:inline-block;margin-top:18px;
+  font-size:12px;letter-spacing:0.1em;
+  background:rgba(255,255,255,0.15);
+  padding:5px 16px;border-radius:100px;
+  color:rgba(255,255,255,0.85);
+}
+
+/* CONTAINER */
+.container{max-width:720px;margin:0 auto;padding:36px 20px 60px;}
+
+/* NOTE */
+.note{
+  background:#fff7d8;border-left:5px solid #f0c000;
+  padding:16px 18px;border-radius:12px;margin-bottom:32px;
+  font-size:14px;line-height:1.8;color:#555;
+}
+
+/* PROGRESS */
+.progress-wrap{background:var(--border);border-radius:4px;height:5px;margin-bottom:6px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.4s ease;width:0%;
+  background:linear-gradient(90deg,var(--accent-from,#2c6bed),var(--accent-to,#7C3AED));}
+.progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+.progress-label{font-size:13px;color:var(--text3);}
+.dim-tag{
+  font-size:12px;font-weight:bold;padding:3px 12px;border-radius:100px;
+  color:#fff;
+}
+
+/* GROUP */
+.q-group{display:none;}
+.q-group.active{display:block;animation:fadeUp 0.3s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+.group-header{
+  border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;
+  display:flex;align-items:flex-start;gap:14px;
+}
+.group-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;background:rgba(255,255,255,0.25);
+}
+.group-title{font-size:17px;font-weight:bold;color:#fff;margin-bottom:4px;}
+.group-desc{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;}
+
+/* QUESTION CARD */
+.q-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px 22px;margin-bottom:14px;
+}
+.q-text{font-size:15px;line-height:1.65;margin-bottom:16px;color:var(--text);}
+
+/* SCALE */
+.scale-row{display:flex;justify-content:space-between;gap:4px;}
+.scale-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;background:none;border:none;padding:6px 2px;border-radius:10px;
+}
+.scale-btn:hover .scale-circle{border-color:var(--accent,#2c6bed);}
+.scale-btn.selected .scale-circle{background:var(--accent,#2c6bed);border-color:var(--accent,#2c6bed);}
+.scale-btn.selected .scale-num{color:var(--accent,#2c6bed);font-weight:bold;}
+.scale-circle{
+  width:34px;height:34px;border-radius:50%;
+  border:2px solid var(--border);background:var(--bg);transition:all 0.15s;
+}
+.scale-num{font-size:12px;color:var(--text3);}
+.scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:8px;}
+
+/* NAV */
+.quiz-nav{display:flex;align-items:center;justify-content:space-between;margin-top:28px;}
+.btn-nav{
+  font-family:"Microsoft JhengHei",sans-serif;
+  font-size:14px;font-weight:bold;padding:10px 24px;border-radius:10px;
+  border:2px solid var(--border);cursor:pointer;background:transparent;color:var(--text);transition:all 0.15s;
+}
+.btn-nav:hover{border-color:#aaa;}
+.btn-nav.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-nav.primary:hover{background:var(--blue-dark);border-color:var(--blue-dark);}
+.btn-nav:disabled{opacity:0.3;cursor:not-allowed;}
+
+/* ── RESULT ── */
+#result{display:none;padding:36px 20px 60px;}
+.result-inner{max-width:720px;margin:0 auto;}
+
+/* Overall hero */
+.result-hero{
+  background:linear-gradient(135deg,#1a1a2e,#16213e);
+  color:#fff;border-radius:20px;padding:2.5rem 2rem;
+  text-align:center;margin-bottom:24px;
+}
+.result-eyebrow{font-size:12px;letter-spacing:0.15em;color:#94A3B8;margin-bottom:10px;}
+.result-overall-label{font-size:15px;color:#CBD5E1;margin-bottom:8px;}
+.result-overall-score{
+  font-size:clamp(3rem,10vw,5rem);font-weight:900;line-height:1;
+  margin-bottom:6px;
+}
+.result-overall-name{font-size:18px;font-weight:bold;margin-bottom:14px;}
+.result-overall-desc{font-size:14px;color:#94A3B8;line-height:1.9;max-width:480px;margin:0 auto;}
+
+/* Gauge bar */
+.gauge-wrap{margin:18px auto 0;max-width:360px;}
+.gauge-bg{height:10px;background:rgba(255,255,255,0.12);border-radius:5px;overflow:hidden;}
+.gauge-fill{height:100%;border-radius:5px;transition:width 0.8s cubic-bezier(.4,0,.2,1);}
+.gauge-labels{display:flex;justify-content:space-between;font-size:11px;color:#64748B;margin-top:6px;}
+
+/* Dimension cards */
+.dim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:20px;}
+.dim-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:22px;overflow:hidden;position:relative;
+}
+.dim-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--dim-color,#2c6bed);
+}
+.dim-card-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.dim-icon-sm{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.dim-name{font-size:15px;font-weight:bold;}
+.dim-score-label{font-size:12px;color:var(--text3);}
+.dim-bar-bg{height:7px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:10px;}
+.dim-bar-fill{height:100%;border-radius:4px;transition:width 0.8s cubic-bezier(.4,0,.2,1);}
+.dim-status{
+  display:inline-block;font-size:12px;font-weight:bold;
+  padding:3px 10px;border-radius:100px;margin-bottom:10px;
+}
+.dim-advice{font-size:13px;color:var(--text2);line-height:1.7;}
+
+/* Suggestion section */
+.suggestion-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:24px;margin-bottom:20px;
+}
+.suggestion-section h3{
+  font-size:12px;letter-spacing:0.1em;color:var(--text2);
+  margin-bottom:16px;font-weight:bold;
+}
+.suggestion-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.suggestion-list li{
+  font-size:14px;color:var(--text2);
+  padding-left:20px;position:relative;line-height:1.7;
+}
+.suggestion-list li::before{
+  content:'→';position:absolute;left:0;color:var(--blue);font-weight:bold;
+}
+
+.result-footer{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap;}
+.btn-back{
+  font-family:"Microsoft JhengHei",sans-serif;
+  font-size:14px;padding:10px 22px;border-radius:10px;
+  border:2px solid var(--border);background:transparent;
+  color:var(--text2);cursor:pointer;transition:all 0.15s;
+}
+.btn-back:hover{border-color:#aaa;color:var(--text);}
+.btn-back.accent{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-back.accent:hover{background:var(--blue-dark);}
+
+.footer{text-align:center;padding:30px 20px;color:#888;font-size:13px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>人境適配測驗</h1>
+  <p>評估你與現在工作或學習環境之間的契合程度，找出最不合的地方。</p>
+  <span class="header-sub">Person–Environment Fit</span>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div id="quiz">
+<div class="container">
+  <div class="note">
+    <b>說明：</b><br>
+    請根據你<b>目前的工作或學習環境</b>作答。<br>
+    每題以 1–5 分評估符合程度：<b>1</b> = 完全不符合　<b>5</b> = 非常符合
+  </div>
+
+  <div class="progress-wrap"><div class="progress-fill" id="prog-fill"></div></div>
+  <div class="progress-meta">
+    <span class="progress-label" id="prog-label"></span>
+    <span class="dim-tag" id="dim-tag"></span>
+  </div>
+
+  <div id="groups-wrap"></div>
+
+  <div class="quiz-nav">
+    <button class="btn-nav" id="btn-prev" onclick="prevG()">← 上一組</button>
+    <span id="page-info" style="font-size:14px;color:#888;"></span>
+    <button class="btn-nav primary" id="btn-next" onclick="nextG()">下一組 →</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ RESULT ═══ -->
+<div id="result">
+<div class="result-inner">
+
+  <div class="result-hero">
+    <p class="result-eyebrow">你的人境適配結果</p>
+    <p class="result-overall-label">整體適配度</p>
+    <div class="result-overall-score" id="res-score"></div>
+    <div class="result-overall-name" id="res-name"></div>
+    <p class="result-overall-desc" id="res-desc"></p>
+    <div class="gauge-wrap">
+      <div class="gauge-bg"><div class="gauge-fill" id="res-gauge" style="background:linear-gradient(90deg,#2c6bed,#7C3AED)"></div></div>
+      <div class="gauge-labels"><span>不適配</span><span>部分適配</span><span>高度適配</span></div>
+    </div>
+  </div>
+
+  <div class="dim-grid" id="dim-grid"></div>
+
+  <div class="suggestion-section" id="suggestion-section">
+    <h3>建議方向</h3>
+    <ul class="suggestion-list" id="suggestion-list"></ul>
+  </div>
+
+  <div class="result-footer">
+    <button class="btn-back" onclick="restart()">↺ 重新測驗</button>
+    <button class="btn-back accent" onclick="window.location.href='index.html'">← 回工具箱</button>
+  </div>
+</div>
+<div class="footer">河馬的小工具箱 © 2026 · 本工具僅供自我探索，不構成職涯建議</div>
+</div>
+
+<script>
+const DIMS = [
+  {
+    id:'value', name:'價值觀適配', icon:'🧭', color:'#7C3AED',
+    bg:'linear-gradient(135deg,#5b21b6,#7C3AED)',
+    desc:'你重視的事情，跟這個環境重視的事情，合得來嗎？',
+    questions:[
+      '這個環境重視的事情（如績效、關係、創新）跟我的核心價值觀一致',
+      '我覺得在這裡做的事情是有意義的',
+      '這個環境對「成功」的定義跟我想的差不多',
+      '我不需要壓抑自己的信念來配合這裡的文化',
+      '這個環境讓我覺得做的事情值得投入',
+    ],
+    low:'你的核心價值觀與現在環境的重視方向落差較大，這可能讓你覺得做的事情沒有意義，甚至得壓抑自己才能配合。',
+    mid:'你的價值觀與環境大致相符，但仍有部分落差，某些時候可能會感到輕微的格格不入。',
+    high:'你的價值觀與這個環境非常吻合，你能在這裡找到意義感與認同感。',
+    advice_low:['思考「這份工作的意義在哪裡」，若實在難以找到，可能需要考慮轉換環境','嘗試在工作之外找到價值感的出口，如志願服務、副業或社群參與'],
+    advice_mid:['找出哪些價值觀落差最大，評估是否可以接受或妥協','主動參與能反映自身價值的專案或任務'],
+    advice_high:['你的價值觀與環境高度吻合，這是長期留在這裡的重要動力']
+  },
+  {
+    id:'style', name:'工作方式適配', icon:'⚙️', color:'#0891B2',
+    bg:'linear-gradient(135deg,#0e7490,#0891B2)',
+    desc:'你習慣的工作節奏與方式，跟這個環境要求的一樣嗎？',
+    questions:[
+      '這個環境給我足夠的自主空間，讓我用自己的方式完成任務',
+      '這裡的工作步調跟我自然的節奏相符',
+      '這裡對溝通方式的期待（如即時回覆、開會頻率）跟我習慣的差不多',
+      '這個環境的任務量與截止日期對我來說是可以負荷的',
+      '我不需要花大量精力去「假裝」自己是另一種工作風格的人',
+    ],
+    low:'你的工作方式與環境的要求差距明顯，這種落差很耗能，尤其對神經多樣性族群來說，長期偽裝自己的風格是很大的負擔。',
+    mid:'你的工作方式與環境大致配合，但某些地方仍需要刻意調整，可能偶爾會感到疲憊。',
+    high:'你的工作方式與環境要求高度吻合，你不需要刻意偽裝，能以自然的狀態發揮。',
+    advice_low:['評估哪些工作方式的差距是「彈性可調整的」，哪些是不可妥協的底線','與主管討論是否有調整工作安排的可能（如非同步溝通、彈性時間）'],
+    advice_mid:['找出最消耗你精力的工作方式差距，優先針對那個部分溝通或調適'],
+    advice_high:['維持目前的工作安排，這是你效率最好的狀態']
+  },
+  {
+    id:'culture', name:'團隊文化適配', icon:'🤝', color:'#16A34A',
+    bg:'linear-gradient(135deg,#15803d,#16A34A)',
+    desc:'你跟這個團隊或組織的相處方式合得來嗎？',
+    questions:[
+      '我在這個團隊裡感到被接納，不需要刻意隱藏自己',
+      '這個環境的競爭或合作文化跟我偏好的方式一致',
+      '這裡對人際關係的期待（如聚餐、閒聊）是我能夠負荷的',
+      '當我有困難或不同意見，我願意在這個環境中說出來',
+      '整體來說，我覺得自己屬於這個團隊或組織',
+    ],
+    low:'你與這個團隊或組織的文化差距較大，可能感到孤立、難以融入，或需要大量的社交表演才能維持關係。',
+    mid:'你與團隊文化大致相符，但某些地方仍讓你感到不太自在或需要刻意配合。',
+    high:'你與這個團隊文化高度契合，在這裡你能以真實的自己與他人互動。',
+    advice_low:['思考這種格格不入感是因為「個性不合」還是「心理安全感不足」','若感到長期孤立，考慮尋找組織內的小圈子，或對外建立支持網絡'],
+    advice_mid:['找出哪些社交期待對你負荷最重，思考是否能設定合理的界線'],
+    advice_high:['這個文化讓你能做真實的自己，是非常珍貴的工作條件']
+  },
+  {
+    id:'sensory', name:'感官與負荷適配', icon:'🧠', color:'#E8521A',
+    bg:'linear-gradient(135deg,#b45309,#E8521A)',
+    desc:'這個環境的感官刺激與整體負荷，是你能承受的嗎？',
+    questions:[
+      '這個環境的噪音、光線、氣味等感官刺激在我可以接受的範圍內',
+      '這裡的資訊量與任務切換頻率不會讓我過度消耗',
+      '我在這個環境工作後，不需要花很長時間才能恢復',
+      '這個環境讓我有足夠的時間獨處或緩衝',
+      '整體來說，這個環境的身心負荷是我長期能夠承擔的',
+    ],
+    low:'這個環境對你的感官與身心造成較大的負荷，長期下去容易導致耗竭。這在神經多樣性族群中非常常見，不代表你「不夠強」。',
+    mid:'這個環境的負荷在你的承受範圍內，但某些時候仍會感到疲憊，需要刻意安排恢復時間。',
+    high:'這個環境的感官刺激與負荷對你來說是舒適的，你能在這裡維持穩定的狀態。',
+    advice_low:['記錄哪些感官觸發最消耗你，與主管討論環境調整的可能性（如降噪耳機、遠端工作）','主動規劃每日的恢復時間，避免過度耗竭'],
+    advice_mid:['建立「能量管理」習慣，辨識高耗能的情境並提前準備'],
+    advice_high:['留意這個優勢，環境負荷的舒適度是選擇未來工作時重要的參考條件']
+  }
+];
+
+let curGroup = 0;
+const totalQ = DIMS.reduce((s,d)=>s+d.questions.length,0);
+const answers = new Array(totalQ).fill(0);
+
+// Build questions
+(function build(){
+  const wrap = document.getElementById('groups-wrap');
+  let qIdx = 0;
+  DIMS.forEach((dim, gi)=>{
+    const div = document.createElement('div');
+    div.className = 'q-group';
+    div.id = `g${gi}`;
+
+    let cards = '';
+    dim.questions.forEach((q, qi)=>{
+      const idx = qIdx++;
+      let btns = '';
+      for(let v=1;v<=5;v++){
+        btns += `<button class="scale-btn" id="sb-${idx}-${v}"
+          style="--accent:${dim.color}" onclick="pick(${idx},${v})">
+          <div class="scale-circle"></div>
+          <span class="scale-num">${v}</span>
+        </button>`;
+      }
+      cards += `<div class="q-card">
+        <div class="q-text">${qi+1}. ${q}</div>
+        <div class="scale-row">${btns}</div>
+        <div class="scale-labels"><span>完全不符合</span><span>非常符合</span></div>
+      </div>`;
+    });
+
+    div.innerHTML = `
+      <div class="group-header" style="background:${dim.bg}">
+        <div class="group-icon">${dim.icon}</div>
+        <div>
+          <div class="group-title">${dim.name}</div>
+          <div class="group-desc">${dim.desc}</div>
+        </div>
+      </div>
+      ${cards}`;
+    wrap.appendChild(div);
+  });
+  showGroup(0);
+})();
+
+function pick(idx, val){
+  answers[idx] = val;
+  const gi = DIMS.findIndex((_,i)=>{
+    let s=0; for(let j=0;j<=i;j++) s+=DIMS[j].questions.length;
+    return idx < s;
+  });
+  for(let v=1;v<=5;v++){
+    const b=document.getElementById(`sb-${idx}-${v}`);
+    if(b) b.classList.toggle('selected',v===val);
+  }
+}
+
+function showGroup(i){
+  document.querySelectorAll('.q-group').forEach(g=>g.classList.remove('active'));
+  document.getElementById(`g${i}`).classList.add('active');
+  curGroup = i;
+  const pct = ((i+1)/DIMS.length)*100;
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-label').textContent = `第 ${i+1} 組 / 共 ${DIMS.length} 組`;
+  document.getElementById('page-info').textContent = `${i+1} / ${DIMS.length}`;
+  const tag = document.getElementById('dim-tag');
+  tag.textContent = DIMS[i].name;
+  tag.style.background = DIMS[i].color;
+  document.getElementById('btn-prev').disabled = i===0;
+  document.getElementById('btn-next').textContent = i===DIMS.length-1 ? '查看結果 ✓' : '下一組 →';
+}
+
+function prevG(){ if(curGroup>0) showGroup(curGroup-1); }
+function nextG(){
+  if(curGroup<DIMS.length-1) showGroup(curGroup+1);
+  else showResult();
+}
+
+function showResult(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('result').style.display='block';
+  window.scrollTo(0,0);
+
+  // Compute dim scores
+  let qIdx=0;
+  const dimScores = DIMS.map(dim=>{
+    let total=0;
+    dim.questions.forEach((_,qi)=>{ total += answers[qIdx++]||3; });
+    const max = dim.questions.length * 5;
+    return { pct: Math.round(total/max*100), raw: total, max };
+  });
+
+  const overall = Math.round(dimScores.reduce((s,d)=>s+d.pct,0)/DIMS.length);
+
+  // Overall level
+  let levelName, levelDesc;
+  if(overall>=75){
+    levelName='高度適配';
+    levelDesc='你目前的環境與你的特質相當吻合。這不代表完全沒有摩擦，但整體來說這個環境能讓你發揮，也不會過度消耗你。';
+  } else if(overall>=50){
+    levelName='部分適配';
+    levelDesc='你與環境之間存在一些落差，部分面向合得來，但也有些地方讓你需要耗費額外的能量去配合。看看哪個面向分數最低，那裡可能是最值得關注的地方。';
+  } else {
+    levelName='適配度偏低';
+    levelDesc='你目前的環境與你的特質有較明顯的落差。這不是你的問題，而是「人」與「環境」之間的不匹配。了解具體落差在哪裡，是改變的第一步。';
+  }
+
+  document.getElementById('res-score').textContent = overall + '%';
+  document.getElementById('res-score').style.color =
+    overall>=75?'#86EFAC':overall>=50?'#FDE68A':'#FCA5A5';
+  document.getElementById('res-name').textContent = levelName;
+  document.getElementById('res-desc').textContent = levelDesc;
+  document.getElementById('res-gauge').style.width = overall+'%';
+
+  // Dim cards
+  const grid = document.getElementById('dim-grid');
+  grid.innerHTML = '';
+  DIMS.forEach((dim,i)=>{
+    const p = dimScores[i].pct;
+    const isLow = p<50, isHigh = p>=75;
+    const statusText = isHigh?'合得來':isLow?'落差較大':'尚可';
+    const statusBg = isHigh?'#dcfce7':isLow?'#fee2e2':'#fef9c3';
+    const statusColor = isHigh?'#16A34A':isLow?'#dc2626':'#b45309';
+    const advice = isLow ? dim.advice_low : isHigh ? dim.advice_high : dim.advice_mid;
+    const desc = isLow ? dim.low : isHigh ? dim.high : dim.mid;
+
+    grid.innerHTML += `<div class="dim-card" style="--dim-color:${dim.color}">
+      <div class="dim-card-top">
+        <div class="dim-icon-sm" style="background:${dim.color}20;font-size:20px">${dim.icon}</div>
+        <div>
+          <div class="dim-name">${dim.name}</div>
+          <div class="dim-score-label">${p}% 符合</div>
+        </div>
+      </div>
+      <div class="dim-bar-bg">
+        <div class="dim-bar-fill" style="width:${p}%;background:${dim.color}"></div>
+      </div>
+      <span class="dim-status" style="background:${statusBg};color:${statusColor}">${statusText}</span>
+      <div class="dim-advice">${desc}</div>
+    </div>`;
+  });
+
+  // Suggestions — lowest dim first
+  const sorted = [...DIMS.map((d,i)=>({...d,pct:dimScores[i].pct,i}))].sort((a,b)=>a.pct-b.pct);
+  const lowestDim = sorted[0];
+  const isLow = lowestDim.pct<50, isHigh = lowestDim.pct>=75;
+  const adviceList = isLow ? lowestDim.advice_low : isHigh ? lowestDim.advice_high : lowestDim.advice_mid;
+
+  document.getElementById('suggestion-list').innerHTML =
+    adviceList.map(a=>`<li>${a}</li>`).join('') +
+    `<li>如果你也做過 Holland 六型測驗，可以對照你的三碼類型，思考目前環境屬於哪種 Holland 類型，兩者是否吻合。</li>`;
+}
+
+function restart(){
+  answers.fill(0);
+  document.querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('result').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  showGroup(0);
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
