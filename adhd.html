@@ -6,106 +6,100 @@
 <title>成人 ADHD 自我檢測表</title>
 
 <style>
-    body{
-        font-family: "Microsoft JhengHei", sans-serif;
-        background:#f4f4f4;
-        margin:0;
-        padding:20px;
-        color:#222;
-        line-height:1.7;
-    }
-
-    .container{
-        max-width:1000px;
-        margin:auto;
-        background:white;
-        padding:30px;
-        border-radius:16px;
-        box-shadow:0 4px 15px rgba(0,0,0,0.08);
-    }
-
-    h1{
-        text-align:center;
-        margin-bottom:10px;
-    }
-
-    .note{
-        background:#fff7d6;
-        border-left:5px solid #e0b400;
-        padding:15px;
-        margin-bottom:25px;
-        border-radius:8px;
-    }
-
-    h2{
-        margin-top:40px;
-        border-bottom:2px solid #ddd;
-        padding-bottom:8px;
-    }
-
-    table{
-        width:100%;
-        border-collapse:collapse;
-        margin-top:15px;
-        margin-bottom:30px;
-    }
-
-    th, td{
-        border:1px solid #ddd;
-        padding:12px;
-        vertical-align:top;
-    }
-
-    th{
-        background:#f0f0f0;
-    }
-
-    tr:nth-child(even){
-        background:#fafafa;
-    }
-
-    .question{
-        width:55%;
-    }
-
-    .score{
-        text-align:center;
-        width:9%;
-    }
-
-    .result-box{
-        background:#eef7ff;
-        padding:20px;
-        border-radius:12px;
-        margin-top:20px;
-    }
-
+body{
+    font-family:"Microsoft JhengHei",sans-serif;
+    background:#f4f4f4;
+    margin:0;
+    padding:20px;
+    color:#222;
+    line-height:1.7;
+}
+.container{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+h1{text-align:center;}
+.note{
+    background:#fff7d6;
+    border-left:5px solid #e0b400;
+    padding:15px;
+    margin-bottom:25px;
+    border-radius:8px;
+}
+h2{
+    margin-top:40px;
+    border-bottom:2px solid #ddd;
+    padding-bottom:8px;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+    margin-bottom:30px;
+}
+th,td{
+    border:1px solid #ddd;
+    padding:12px;
+    vertical-align:top;
+}
+th{background:#f0f0f0;}
+tr:nth-child(even){background:#fafafa;}
+.question{width:55%;}
+.score{text-align:center;width:9%;}
+.result-box{
+    background:#eef7ff;
+    padding:20px;
+    border-radius:12px;
+    margin-top:20px;
+}
+button{
+    background:#2c6bed;
+    color:white;
+    border:none;
+    padding:14px 24px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+    margin-top:12px;
+    margin-right:8px;
+}
+button:hover{background:#1f54c2;}
+.secondary{
+    background:#666;
+}
+.secondary:hover{
+    background:#444;
+}
+.danger{
+    background:#b64545;
+}
+.danger:hover{
+    background:#8f3030;
+}
+.footer{
+    margin-top:40px;
+    font-size:14px;
+    color:#666;
+}
+.back{
+    margin-top:30px;
+}
+.back a{
+    color:#2c6bed;
+    text-decoration:none;
+}
+@media(max-width:768px){
+    table{font-size:14px;}
+    .container{padding:20px;}
     button{
-        background:#2c6bed;
-        color:white;
-        border:none;
-        padding:14px 24px;
-        border-radius:10px;
-        cursor:pointer;
-        font-size:16px;
-        margin-top:20px;
+        width:100%;
+        margin-right:0;
     }
-
-    button:hover{
-        background:#1f54c2;
-    }
-
-    .footer{
-        margin-top:40px;
-        font-size:14px;
-        color:#666;
-    }
-
-    @media(max-width:768px){
-        table{
-            font-size:14px;
-        }
-    }
+}
 </style>
 </head>
 
@@ -121,9 +115,7 @@
 若長期影響工作、人際、情緒或生活功能，建議尋求精神科醫師或臨床心理師進一步評估。
 </div>
 
-<p>
-請依照最近半年內的狀況評分：
-</p>
+<p>請依照最近半年內的狀況評分：</p>
 
 <ul>
 <li>0 分＝幾乎沒有</li>
@@ -176,11 +168,12 @@ const questions3 = [
 function createRows(list, startId){
     let html = "";
     list.forEach((q,index)=>{
+        let id = startId + index;
         html += "<tr>";
-        html += `<td>${startId + index}. ${q}</td>`;
+        html += `<td>${id}. ${q}</td>`;
         for(let i=0;i<=3;i++){
             html += `<td style="text-align:center;">
-                        <input type="radio" name="q${startId+index}" value="${i}">
+                        <input type="radio" name="q${id}" value="${i}">
                     </td>`;
         }
         html += "</tr>";
@@ -190,7 +183,6 @@ function createRows(list, startId){
 </script>
 
 <script>createRows(questions1,1)</script>
-
 </table>
 
 <h2>二、過動／衝動特徵</h2>
@@ -205,7 +197,6 @@ function createRows(list, startId){
 </tr>
 
 <script>createRows(questions2,10)</script>
-
 </table>
 
 <h2>三、成人 ADHD 常見狀態</h2>
@@ -220,40 +211,53 @@ function createRows(list, startId){
 </tr>
 
 <script>createRows(questions3,18)</script>
-
 </table>
 
 <button onclick="calculateScore()">計算結果</button>
+<button class="secondary" onclick="showLastResult()">查看上次結果</button>
+<button class="secondary" onclick="downloadResult()">下載本次結果</button>
+<button class="danger" onclick="clearLastResult()">清除紀錄</button>
 
 <div class="result-box" id="result">
 尚未計算。
+</div>
+
+<div class="back">
+<a href="index.html">← 回到主頁</a>
 </div>
 
 <div class="footer">
 <b>提醒：</b><br>
 ADHD 並不等於懶惰或不努力。<br>
 有些成年人直到出社會後，才第一次發現自己的注意力、情緒調節與執行功能長期受到影響。<br><br>
-
 但「像 ADHD」不一定就是 ADHD，焦慮、憂鬱、睡眠不足、創傷壓力、ASD 或長期高壓生活，也可能出現類似狀態。
 </div>
 
 </div>
 
 <script>
+let currentPlainResult = "";
 
 function calculateScore(){
-
     let total = 0;
+    let answered = 0;
 
     for(let i=1;i<=20;i++){
-
         let radios = document.getElementsByName("q"+i);
-
         for(let r of radios){
             if(r.checked){
                 total += parseInt(r.value);
+                answered++;
             }
         }
+    }
+
+    if(answered < 20){
+        document.getElementById("result").innerHTML = `
+            <h3>提醒</h3>
+            <p>你還有題目尚未作答。請完成全部題目後再計算。</p>
+        `;
+        return;
     }
 
     let resultText = "";
@@ -271,13 +275,81 @@ function calculateScore(){
         resultText = "分數偏高，若生活長期受到影響，建議尋求專業評估。";
     }
 
-    document.getElementById("result").innerHTML = `
+    let time = new Date().toLocaleString();
+
+    let finalResult = `
         <h3>檢測結果</h3>
-        <p><b>總分：</b> ${total} 分</p>
+        <p><b>測驗時間：</b>${time}</p>
+        <p><b>總分：</b>${total} 分</p>
         <p>${resultText}</p>
+    `;
+
+    currentPlainResult =
+`成人 ADHD 自我檢測結果
+
+測驗時間：${time}
+總分：${total} 分
+結果說明：${resultText}
+
+提醒：
+這不是正式醫療診斷。若長期影響工作、人際、情緒或生活功能，建議尋求精神科醫師或臨床心理師進一步評估。`;
+
+    document.getElementById("result").innerHTML = finalResult;
+
+    localStorage.setItem("adhd_last_result_html", finalResult);
+    localStorage.setItem("adhd_last_result_text", currentPlainResult);
+    localStorage.setItem("adhd_last_score", total);
+    localStorage.setItem("adhd_last_time", time);
+}
+
+function showLastResult(){
+    let lastResult = localStorage.getItem("adhd_last_result_html");
+
+    if(!lastResult){
+        document.getElementById("result").innerHTML = `
+            <h3>尚無紀錄</h3>
+            <p>目前沒有儲存的上次結果。</p>
+        `;
+        return;
+    }
+
+    document.getElementById("result").innerHTML = `
+        <h3>上次儲存結果</h3>
+        ${lastResult}
     `;
 }
 
+function downloadResult(){
+    let resultText = currentPlainResult || localStorage.getItem("adhd_last_result_text");
+
+    if(!resultText){
+        alert("請先完成測驗並計算結果。");
+        return;
+    }
+
+    let blob = new Blob([resultText], {type:"text/plain;charset=utf-8"});
+    let link = document.createElement("a");
+
+    link.href = URL.createObjectURL(blob);
+    link.download = "ADHD自我檢測結果.txt";
+    link.click();
+
+    URL.revokeObjectURL(link.href);
+}
+
+function clearLastResult(){
+    localStorage.removeItem("adhd_last_result_html");
+    localStorage.removeItem("adhd_last_result_text");
+    localStorage.removeItem("adhd_last_score");
+    localStorage.removeItem("adhd_last_time");
+
+    currentPlainResult = "";
+
+    document.getElementById("result").innerHTML = `
+        <h3>已清除</h3>
+        <p>上次結果已清除。</p>
+    `;
+}
 </script>
 
 </body>
