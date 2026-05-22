@@ -64,9 +64,24 @@ button{
     border-radius:10px;
     cursor:pointer;
     font-size:16px;
-    margin-top:20px;
+    margin-top:12px;
+    margin-right:8px;
 }
-button:hover{background:#1f54c2;}
+button:hover{
+    background:#1f54c2;
+}
+.secondary{
+    background:#666;
+}
+.secondary:hover{
+    background:#444;
+}
+.danger{
+    background:#b64545;
+}
+.danger:hover{
+    background:#8f3030;
+}
 .back{
     margin-top:30px;
 }
@@ -82,6 +97,10 @@ button:hover{background:#1f54c2;}
 @media(max-width:768px){
     table{font-size:14px;}
     .container{padding:20px;}
+    button{
+        width:100%;
+        margin-right:0;
+    }
 }
 </style>
 </head>
@@ -198,6 +217,9 @@ function createRows(list, startId){
 </table>
 
 <button onclick="calculateScore()">計算結果</button>
+<button class="secondary" onclick="showLastResult()">查看上次結果</button>
+<button class="secondary" onclick="downloadResult()">下載本次結果</button>
+<button class="danger" onclick="clearLastResult()">清除紀錄</button>
 
 <div class="result-box" id="result">
 尚未計算。
@@ -217,12 +239,18 @@ ASD 特徵並不是簡單的有或沒有。<br>
 </div>
 
 <script>
+
+let currentPlainResult = "";
+
 function calculateScore(){
+
     let total = 0;
     let answered = 0;
 
     for(let i=1;i<=21;i++){
+
         let radios = document.getElementsByName("q"+i);
+
         for(let r of radios){
             if(r.checked){
                 total += parseInt(r.value);
@@ -254,12 +282,87 @@ function calculateScore(){
         resultText = "檢核結果偏高，若這些狀態從小持續存在，並明顯影響人際、生活或工作，建議尋求專業評估。";
     }
 
-    document.getElementById("result").innerHTML = `
+    let time = new Date().toLocaleString();
+
+    let finalResult = `
         <h3>檢核結果</h3>
-        <p><b>總分：</b> ${total} 分</p>
+        <p><b>測驗時間：</b>${time}</p>
+        <p><b>總分：</b>${total} 分</p>
         <p>${resultText}</p>
     `;
+
+    currentPlainResult =
+`成人 ASD 特徵檢核結果
+
+測驗時間：${time}
+總分：${total} 分
+結果說明：${resultText}
+
+提醒：
+這不是正式診斷工具。若長期影響生活、人際、工作或情緒狀態，建議尋求精神科醫師或臨床心理師進一步評估。`;
+
+    document.getElementById("result").innerHTML = finalResult;
+
+    localStorage.setItem("asd_last_result_html", finalResult);
+    localStorage.setItem("asd_last_result_text", currentPlainResult);
+    localStorage.setItem("asd_last_score", total);
+    localStorage.setItem("asd_last_time", time);
 }
+
+function showLastResult(){
+
+    let lastResult = localStorage.getItem("asd_last_result_html");
+
+    if(!lastResult){
+
+        document.getElementById("result").innerHTML = `
+            <h3>尚無紀錄</h3>
+            <p>目前沒有儲存的上次結果。</p>
+        `;
+
+        return;
+    }
+
+    document.getElementById("result").innerHTML = `
+        <h3>上次儲存結果</h3>
+        ${lastResult}
+    `;
+}
+
+function downloadResult(){
+
+    let resultText = currentPlainResult || localStorage.getItem("asd_last_result_text");
+
+    if(!resultText){
+        alert("請先完成測驗並計算結果。");
+        return;
+    }
+
+    let blob = new Blob([resultText], {type:"text/plain;charset=utf-8"});
+    let link = document.createElement("a");
+
+    link.href = URL.createObjectURL(blob);
+    link.download = "ASD特徵檢核結果.txt";
+    link.click();
+
+    URL.revokeObjectURL(link.href);
+}
+
+function clearLastResult(){
+
+    localStorage.removeItem("asd_last_result_html");
+    localStorage.removeItem("asd_last_result_text");
+    localStorage.removeItem("asd_last_score");
+    localStorage.removeItem("asd_last_time");
+
+    currentPlainResult = "";
+
+    document.getElementById("result").innerHTML = `
+        <h3>已清除</h3>
+        <p>上次結果已清除。</p>
+    `;
+}
+
 </script>
 
 </body>
